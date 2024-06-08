@@ -29,7 +29,8 @@ jobs:
               shell: pwsh
               if: steps.cache-step.outputs.cache-hit != 'true'
               run: |
-                pip3 install ansible boto3 botocore
+                python -m pip install --upgrade pip
+                pip install ansible boto3 botocore
             
             - name: Installing Ansible Galaxy Collection (amazon.aws)
               shell: pwsh
