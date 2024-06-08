@@ -25,7 +25,7 @@ jobs:
               run: pip install ansible
             
             - name: Installing boto3 and botocore
-              if: steps.cache-step.outputs.cache-hit != 'true'
+            #   if: steps.cache-step.outputs.cache-hit != 'true'
               run: pip install boto3 botocore 
 
             - name: Installing Ansible Galaxy Collection (amazon.aws)
