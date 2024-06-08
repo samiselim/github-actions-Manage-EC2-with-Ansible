@@ -20,9 +20,9 @@ jobs:
             - name: Clonning The Repo to the runner
               uses: actions/checkout@v3
             
-            - name: Installing Ansible (latest)
+            - name: Installing Ansible (latest) and boto3 modules
               if: steps.cache-step.outputs.cache-hit != 'true'
-              run: pip3 install ansible
+              run: pip3 install ansible boto3
             
             - name: Installing Ansible Galaxy Collection (amazon.aws)
               if: steps.cache-step.outputs.cache-hit != 'true'
@@ -37,3 +37,6 @@ jobs:
                 aws-region: ${{ secrets.AWS_REGION }}
                 role-session-name: GH-OIDC-TERRAFORM
                 output-credentials: true
+
+            - name: Running Ansible inventory file
+              run: ansible-invenory -i inventory.aws_ec2.yaml --list
