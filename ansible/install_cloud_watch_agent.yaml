@@ -1,0 +1,6 @@
+- name: Install Cloud Watch Agent
+  become: yes
+  hosts: key
+  tasks:
+  roles:  
+    - cloud-watch-agent
