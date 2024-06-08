@@ -19,7 +19,7 @@ jobs:
             ~/.cache
             ~/.ansible
         key: ansible-caches 
-
+        
     - name: Checkout repository
       uses: actions/checkout@v2
 
@@ -32,18 +32,15 @@ jobs:
 
     - name: Set up Python
       uses: actions/setup-python@v2
-      if: steps.cache-step.outputs.cache-hit != 'true'
       with:
         python-version: '3.x'
 
-    - name: Install dependencies pip, ansible and boto3
-      if: steps.cache-step.outputs.cache-hit != 'true'
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install ansible botocore boto3
 
     - name: Install Ansible Collections
-      if: steps.cache-step.outputs.cache-hit != 'true'
       run: ansible-galaxy collection install amazon.aws
 
     - name: Test Inventory Configuration
