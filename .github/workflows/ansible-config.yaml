@@ -1,0 +1,37 @@
+name: Ansible Deployment 
+on: 
+    push:
+    workflow_dispatch: 
+
+jobs:
+    ansible-depoy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Cache the deps 
+              id: cache-step
+              uses: actions/cache@v3
+              with:
+                path: |
+                  ~/.cache
+                  ~/.ansible
+                key: ansible-caches 
+            - name: Clonning The Repo to the runner
+              uses: actions/checkout@v3
+            
+            - name: Installing Ansible (latest)
+              if: steps.cache-step.outputs.cache-hit != 'true'
+              run: pip3 install ansible
+            
+            - name: Installing Ansible Galaxy Collection (amazon.aws)
+              if: steps.cache-step.outputs.cache-hit != 'true'
+              run: ansible-galaxy collection install amazon.aws
+
+            
+            - name: Configure AWS Credentials from AWS account
+              id: login
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                role-to-assume:  ${{ secrets.AWS_ROLE }}
+                aws-region: ${{ secrets.AWS_REGION }}
+                role-session-name: GH-OIDC-TERRAFORM
+                output-credentials: true
