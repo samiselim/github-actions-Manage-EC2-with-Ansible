@@ -7,6 +7,8 @@ permissions:
     id-token: write
 jobs:
     ansible-depoy:
+        environment: 
+            aws-access-key-id: ${{ }}
         runs-on: ubuntu-latest
         steps:
             - name: Cache the deps 
@@ -49,6 +51,10 @@ jobs:
                 output-credentials: true
 
             - name: Running Ansible inventory file
+              env:
+                aws-access-key-id: ${{ steps.login.outputs.aws-access-key-id }}
+                aws-secret-access-id: ${{ steps.login.outputs.aws-secret-access-key }}
+                aws-region: ${{ secrets.AWS_REGION }}
               shell: pwsh
               run: |
                 ansible-inventory --inventory inv.aws_ec2.yml --list
