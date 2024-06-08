@@ -20,10 +20,14 @@ jobs:
             - name: Clonning The Repo to the runner
               uses: actions/checkout@v3
             
-            - name: Installing Ansible (latest) and boto3 modules
+            - name: Installing Ansible (latest)
               if: steps.cache-step.outputs.cache-hit != 'true'
-              run: pip3 install ansible boto3
+              run: pip install ansible
             
+            - name: Installing boto3 and botocore
+              if: steps.cache-step.outputs.cache-hit != 'true'
+              run: pip install boto3 botocore 
+
             - name: Installing Ansible Galaxy Collection (amazon.aws)
               if: steps.cache-step.outputs.cache-hit != 'true'
               run: ansible-galaxy collection install amazon.aws
