@@ -9,14 +9,6 @@ jobs:
     ansible-depoy:
         runs-on: ubuntu-latest
         steps:
-            - name: Cache the deps 
-              id: cache-step
-              uses: actions/cache@v3
-              with:
-                path: |
-                  ~/.cache
-                  ~/.ansible
-                key: ansible-caches 
             - name: Clonning The Repo to the runner
               uses: actions/checkout@v3
             
@@ -27,14 +19,12 @@ jobs:
 
             - name: Installing Ansible (latest) and boto3 modules
               shell: pwsh
-              if: steps.cache-step.outputs.cache-hit != 'true'
               run: |
                 python -m pip install --upgrade pip
                 pip install ansible boto3 botocore
             
             - name: Installing Ansible Galaxy Collection (amazon.aws)
               shell: pwsh
-              if: steps.cache-step.outputs.cache-hit != 'true'
               run: |
                 ansible-galaxy collection install amazon.aws
 
