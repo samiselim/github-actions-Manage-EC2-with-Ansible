@@ -61,4 +61,4 @@ jobs:
               run: Set-Content -Path mykey -Value '@{{ secrets.ANSIBLE_SSH_KEY }}'
             - name: Running Playbook
               shell: pwsh 
-              run: ansible-playbook --inventory  inv.aws_ec2.yml --private-key mykey  install_jenkins.yaml
+              run: ansible-playbook --inventory  inv.aws_ec2.yml --private-key mykey  ./ansible/install_jenkins.yaml
