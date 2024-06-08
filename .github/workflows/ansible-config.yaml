@@ -7,8 +7,6 @@ permissions:
     id-token: write
 jobs:
     ansible-depoy:
-        environment: 
-            aws-access-key-id: ${{ }}
         runs-on: ubuntu-latest
         steps:
             - name: Cache the deps 
