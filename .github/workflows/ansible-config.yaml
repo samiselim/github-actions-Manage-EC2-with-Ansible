@@ -17,8 +17,8 @@ jobs:
                   ~/.cache
                   ~/.ansible
                 key: ansible-caches 
-            # - name: Clonning The Repo to the runner
-            #   uses: actions/checkout@v3
+            - name: Clonning The Repo to the runner
+              uses: actions/checkout@v3
             
             - name: Installing Ansible (latest) and boto3 modules
               if: steps.cache-step.outputs.cache-hit != 'true'
