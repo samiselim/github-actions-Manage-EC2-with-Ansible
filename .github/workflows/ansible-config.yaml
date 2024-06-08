@@ -1,6 +1,6 @@
 name: Ansible Deployment 
 on: 
-    push:
+    # push:
     workflow_dispatch: 
 
 permissions: 
@@ -39,4 +39,4 @@ jobs:
                 output-credentials: true
 
             - name: Running Ansible inventory file
-              run: ansible-inventory -i inventory.aws_ec2.yaml --list
+              run: ansible-inventory -i ./inventory.aws_ec2.yaml --list

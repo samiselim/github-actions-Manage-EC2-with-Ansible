@@ -80,12 +80,12 @@ jobs:
           - name: Setup Terraform
             uses: hashicorp/setup-terraform@v3
 
-        #   - name: Terraform init
-        #     id: init
-        #     env: 
-        #       AWS_BUCKET_NAME: ${{ secrets.AWS_BACKEND_NAME }}
-        #       AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_STATEFILE_NAME }}
-        #     run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" 
+          - name: Terraform init
+            id: init
+            env: 
+              AWS_BUCKET_NAME: ${{ secrets.AWS_BACKEND_NAME }}
+              AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_STATEFILE_NAME }}
+            run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" 
 
           - name: Terraform Destroy
             run: terraform destroy -auto-approve 
