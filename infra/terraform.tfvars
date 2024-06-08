@@ -12,7 +12,7 @@ private_subnets_config = {
   subnet_azs   = ["eu-west-3a" , "eu-west-3b"]
 }
 sg_config = {
-  ingress_count = [{count = 7}]
+  ingress_count = [{count = 4}]
   ingress_rule = [{
     port = 443
     protocol = "tcp"
