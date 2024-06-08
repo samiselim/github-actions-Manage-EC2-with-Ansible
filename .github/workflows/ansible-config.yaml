@@ -58,7 +58,9 @@ jobs:
                 ansible-inventory --inventory inv.aws_ec2.yml --list
             - name: Keep ssh key in a file 
               shell: pwsh
-              run: Set-Content -Path mykey -Value '@{{ secrets.ANSIBLE_SSH_KEY }}'
+              run: |
+                Set-Content -Path mykey -Value '@{{ secrets.ANSIBLE_SSH_KEY }}'
+                chmod 400 mykey
             - name: Running Playbook
               shell: pwsh 
               run: ansible-playbook --inventory  inv.aws_ec2.yml --private-key mykey  ./ansible/install_jenkins.yaml
