@@ -20,17 +20,17 @@ jobs:
             - name: Clonning The Repo to the runner
               uses: actions/checkout@v3
             
-            - name: Installing Ansible (latest)
+            - name: Installing Ansible (latest) and boto3 modules
+              shell: pwsh
               if: steps.cache-step.outputs.cache-hit != 'true'
-              run: pip install ansible
+              run: |
+                pip3 install ansible boto3
             
-            - name: Installing boto3 and botocore
-            #   if: steps.cache-step.outputs.cache-hit != 'true'
-              run: pip install boto3 botocore 
-
             - name: Installing Ansible Galaxy Collection (amazon.aws)
+              shell: pwsh
               if: steps.cache-step.outputs.cache-hit != 'true'
-              run: ansible-galaxy collection install amazon.aws
+              run: |
+                ansible-galaxy collection install amazon.aws
 
             
             - name: Configure AWS Credentials from AWS account
@@ -43,6 +43,6 @@ jobs:
                 output-credentials: true
 
             - name: Running Ansible inventory file
+              shell: pwsh
               run: |
-                pwd
                 ansible-inventory --inventory inventory.aws_ec2.yaml --list
