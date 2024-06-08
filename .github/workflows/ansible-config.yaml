@@ -2,6 +2,8 @@ name: Ansible Deployment
 on: 
     # push:
     workflow_dispatch: 
+env:
+    ANSIBLE_HOST_KEY_CHECKING: false
 
 permissions: 
     id-token: write
@@ -54,3 +56,9 @@ jobs:
               shell: pwsh
               run: |
                 ansible-inventory --inventory inv.aws_ec2.yml --list
+            - name: Keep ssh key in a file 
+              shell: pwsh
+              run: Set-Content -Path mykey -Value '@{{ secrets.ANSIBLE_SSH_KEY }}'
+            - name: Running Playbook
+              shell: pwsh 
+              run: ansible-playbook --inventory --private-key mykey inv.aws_ec2.yml install_jenkins.yaml

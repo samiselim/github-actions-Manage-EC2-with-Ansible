@@ -6,3 +6,4 @@ filters:
 
 keyed_groups:
   - key: key_name
+    separator: ''
