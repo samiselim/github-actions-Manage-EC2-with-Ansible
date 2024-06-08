@@ -19,7 +19,7 @@ jobs:
                 path: |
                   ~/.ansible
                   ~/.cache
-                  /usr/local/lib/python3.8/dist-packages
+                  /usr/lib/python3/dist-packages
                 key: ${{ runner.os }}-deps
 
             - name: Clonning The Repo to the runner
