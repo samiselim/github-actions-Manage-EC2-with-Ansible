@@ -45,4 +45,4 @@ jobs:
             - name: Running Ansible inventory file
               shell: pwsh
               run: |
-                ansible-inventory --inventory inventory.aws_ec2.yaml --list
+                ansible-inventory --inventory inv.aws_ec2.yml --list
