@@ -59,7 +59,7 @@ jobs:
             - name: Keep ssh key in a file 
               shell: pwsh
               run: |
-                Set-Content -Path mykey -Value '@{{ secrets.ANSIBLE_SSH_KEY }}'
+                Set-Content -Path mykey -Value '${{ secrets.ANSIBLE_SSH_KEY }}'
                 chmod 400 mykey
             - name: Running Playbook
               shell: pwsh 
