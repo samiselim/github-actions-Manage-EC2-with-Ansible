@@ -11,14 +11,19 @@ jobs:
       contents: read
 
     steps:
-    - name: Cache the deps 
-      id: cache-step
+    # - name: Cache the deps 
+    #   id: cache-step
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: |
+    #         ~/.cache
+    #     key: ansible-caches 
+    - name: Cache pip
+      id: cache-pip
       uses: actions/cache@v3
       with:
-        path: |
-            ~/.cache
-            ~/.ansible
-        key: ansible-caches 
+        path: ~/.cache/pip
+        key: cache-key
 
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -32,12 +37,12 @@ jobs:
 
     - name: Set up Python
       uses: actions/setup-python@v2
-      if: steps.cache-step.outputs.cache-hit != 'true'
+      if: steps.cache-pip.outputs.cache-hit != 'true'
       with:
         python-version: '3.x'
 
     - name: Install dependencies
-      if: steps.cache-step.outputs.cache-hit != 'true'
+      if: steps.cache-pip.outputs.cache-hit != 'true'
       run: |
         python -m pip install --upgrade pip
         pip install ansible botocore boto3
