@@ -3,3 +3,6 @@ regions:
   - eu-west-3
 filters:
   instance-state-name: running
+
+keyed_groups:
+  - key: key_name
