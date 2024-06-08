@@ -1,0 +1,126 @@
+name: "terraform action"
+on:
+    workflow_dispatch: 
+        inputs:
+          action:
+            type: choice
+            options:
+              - apply
+              - destroy
+permissions: 
+    id-token: write 
+    contents: read
+env:
+    TF_LOG: INFO
+    AWS_REGION: ${{ secrets.AWS_REGION }}
+jobs:
+    apply:
+        runs-on: ubuntu-latest
+        if: inputs.action == 'apply'
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./infra
+        steps:
+            - name: Git Checkout 
+              uses: actions/checkout@v3
+            
+            - name: Configure AWS Credentials from AWS account
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                role-to-assume:  ${{ secrets.AWS_ROLE }}
+                aws-region: ${{ secrets.AWS_REGION }}
+                role-session-name: GH-OIDC-TERRAFORM
+                
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v3
+
+            - name: Terraform init
+              id: init
+              env: 
+                AWS_BUCKET_NAME: ${{ secrets.AWS_BACKEND_NAME }}
+                AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_STATEFILE_NAME }}
+              run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" 
+            
+            - name: Terraform Validate
+              id: validate
+              run: terraform validate -no-color 
+
+            - name: Terraform plan
+              id: plan
+              run: terraform plan -no-color 
+              continue-on-error: true
+            
+            - uses: actions/github-script@v6
+              env:
+                PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+              with:
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                script: |
+                  const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+                  #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+                  #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+                  <details><summary>Validation Output</summary>
+      
+                  \`\`\`\n
+                  ${{ steps.validate.outputs.stdout }}
+                  \`\`\`
+      
+                  </details>
+      
+                  #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+      
+                  <details><summary>Show Plan</summary>
+      
+                  \`\`\`\n
+                  ${process.env.PLAN}
+                  \`\`\`
+      
+                  </details>
+      
+                  *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+      
+                  github.rest.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: output
+                  })
+            - name: Terraform Plan Status
+              if: steps.plan.outcome == 'failure'
+              run: exit 1
+        
+            - name: Terraform Apply
+              run: terraform apply -auto-approve -input=false
+
+
+    destroy:
+        runs-on: ubuntu-latest
+        if: inputs.action == 'destroy'
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./infra
+        steps: 
+          - name: Git Checkout 
+            uses: actions/checkout@v3
+          
+          - name: Configure AWS Credentials from AWS account
+            uses: aws-actions/configure-aws-credentials@v4
+            with:
+              role-to-assume:  ${{ secrets.AWS_ROLE }}
+              aws-region: ${{ secrets.AWS_REGION }}
+              role-session-name: GH-OIDC-TERRAFORM
+              
+          - name: Setup Terraform
+            uses: hashicorp/setup-terraform@v3
+
+        #   - name: Terraform init
+        #     id: init
+        #     env: 
+        #       AWS_BUCKET_NAME: ${{ secrets.AWS_BACKEND_NAME }}
+        #       AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_STATEFILE_NAME }}
+        #     run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" 
+
+          - name: Terraform Destroy
+            run: terraform destroy -auto-approve 
